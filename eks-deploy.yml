@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-pipeline deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app_pipeline
+  template:
+    metadata:
+      labels:
+        app: app_pipeline
+    spec:
+      containers:
+      - name: app_pipeline
+        image: 055745520549.dkr.ecr.us-east-1.amazonaws.com/app_pipeline:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+# service type loadbalancer       
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app_pipeline
+    k8s-app: app_pipeline
+  name: app_pipeline
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8082
+  type: LoadBalancer
+  selector:
+    app: app_pipeline
