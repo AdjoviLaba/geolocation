@@ -4,8 +4,7 @@ pipeline {
         maven 'M2_HOME'
     }
       environment {
-        registry = 'public.ecr.aws/g3f3g4u0/app_pipeline'
-        dockerimage = '' 
+       ECR_URI = '055745520549.dkr.ecr.us-east-1.amazonaws.com/app_pipeline'
     }
     stages {
         stage('Checkout'){
@@ -35,8 +34,9 @@ pipeline {
         stage('Pushing to ECR') {
             steps{
                 script {
-                    sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin account_id.dkr.ecr.us-east-1.amazonaws.com'
-                    sh 'docker push account_id.dkr.ecr.us-east-1.amazonaws.com/app-pipeline:latest'
+                    sh "docker build -t $ECR_URI:latest ."
+                    sh "docker push $ECR_URI:latest"
+
                 }
             }
         }
