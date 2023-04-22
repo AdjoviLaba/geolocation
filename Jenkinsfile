@@ -23,18 +23,19 @@ pipeline {
             }
         }
           // Building Docker images
-        stage('Building image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
+       // stage('Building image') {
+        //    steps{
+         //       script {
+        //            dockerImage = docker.build registry + ":$BUILD_NUMBER"
+        //        }
+       //     }
+      //  }
         // Uploading Docker images into AWS ECR
         stage('Pushing to ECR') {
             steps{
                 script {
                     sh "docker build -t $ECR_URI:latest ."
+                    sh "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URI"
                     sh "docker push $ECR_URI:latest"
 
                 }
